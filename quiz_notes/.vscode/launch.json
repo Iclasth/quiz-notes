@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "quiz_notes",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "quiz_notes (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "quiz_notes (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "quiz_notes (Flutter)",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "Quiz Notes (Android Emulator)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5554"
+        },
+    ]
+}

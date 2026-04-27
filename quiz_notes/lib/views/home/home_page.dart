@@ -14,10 +14,20 @@ class _HomePageState extends State<HomePage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children:<Widget> [
+            _buildTitle(),
+          ],
+        )
+        ) ,
+       
       
     );
   }
-  
+  Widget _buildTitle() => Text(
+        "Quiz Notes",
+        textAlign: TextAlign.center,
+       );
 }
