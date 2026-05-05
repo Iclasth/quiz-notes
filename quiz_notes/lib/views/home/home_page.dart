@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../revisao/revisao_page.dart';
+import '../baralhos/baralhos_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -11,12 +11,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void abrirRevisao() {
+  void abrirBaralhos() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const RevisaoPage(),
-      ),
+      MaterialPageRoute(builder: (context) => BaralhosPage()),
     );
   }
 
@@ -32,8 +30,8 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: ElevatedButton(
-                onPressed: abrirRevisao,
-                child: const Text('Iniciar revisão'),
+                onPressed: abrirBaralhos,
+                child: const Text('Ver baralhos'),
               ),
             ),
           ],
@@ -43,11 +41,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildTitle() => const Text(
-        'Quiz Notes',
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.bold,
-        ),
-      );
+    'Quiz Notes',
+    textAlign: TextAlign.center,
+    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+  );
 }

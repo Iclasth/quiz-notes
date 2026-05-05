@@ -4,16 +4,18 @@ class RevisaoController {
   List<CardEstudo> cards = [
     CardEstudo(
       pergunta: 'O que é Flutter?',
-      resposta:
-          'Flutter é um framework para criar aplicativos multiplataforma.',
+      resposta: 'Flutter é um framework para criar aplicativos multiplataforma.',
+      baralhoId: 'flutter_basico',
     ),
     CardEstudo(
       pergunta: 'O que é Dart?',
       resposta: 'Dart é a linguagem de programação usada no Flutter.',
+      baralhoId: 'flutter_basico',
     ),
     CardEstudo(
       pergunta: 'O que é MVC?',
       resposta: 'MVC é uma arquitetura que separa Model, View e Controller.',
+      baralhoId: 'flutter_basico',
     ),
   ];
 
