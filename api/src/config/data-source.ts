@@ -4,9 +4,10 @@ import { DataSource } from 'typeorm';
 export const AppDataSource = new DataSource({
     type: 'postgres',
     url: process.env.POSTGRES_URL!,
-    synchronize: true, // Use only in dev, syncs schema automatically
+    synchronize: true, 
     logging: false,
-    entities: [__dirname + '/../model/*.ts'],
+    ssl: { rejectUnauthorized: false }, 
+    entities: [__dirname + '/../model/*.{ts,js}'],
     subscribers: [],
     migrations: [],
 });
