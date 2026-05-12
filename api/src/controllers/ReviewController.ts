@@ -10,7 +10,7 @@ export class ReviewController {
 
     public getCardsForReview = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { deckId } = req.params;
+            const deckId = req.params['deckId'] as string;
             const cards = await this.reviewService.getCardsForReview(deckId);
             res.status(200).json(cards);
         } catch (error) {
@@ -20,7 +20,7 @@ export class ReviewController {
 
     public submitReview = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { cardId } = req.params;
+            const cardId = req.params['cardId'] as string;
             const { qualidade } = req.body;
             const card = await this.reviewService.submitReview(cardId, qualidade);
             res.status(200).json(card);

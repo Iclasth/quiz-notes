@@ -10,7 +10,7 @@ export class DeckController {
 
     public createDeck = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { userId } = req.params;
+            const userId = req.params['userId'] as string;
             const { nome } = req.body;
             const deck = await this.deckService.createDeck(userId, nome);
             res.status(201).json(deck);
@@ -21,7 +21,7 @@ export class DeckController {
 
     public getUserDecks = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { userId } = req.params;
+            const userId = req.params['userId'] as string;
             const decks = await this.deckService.getUserDecks(userId);
             res.status(200).json(decks);
         } catch (error) {

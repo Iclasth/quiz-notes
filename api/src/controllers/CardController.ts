@@ -10,7 +10,7 @@ export class CardController {
 
     public createCard = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { deckId } = req.params;
+            const deckId = req.params['deckId'] as string;
             const { frente, verso } = req.body;
             const card = await this.cardService.createCard(deckId, frente, verso);
             res.status(201).json(card);

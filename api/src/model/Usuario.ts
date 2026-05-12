@@ -4,20 +4,20 @@ import { Baralho } from './Baralho';
 @Entity('usuarios')
 export class Usuario {
     @PrimaryGeneratedColumn('uuid', { name: 'id_usuario' })
-    id_usuario: string;
+    id_usuario!: string;
 
     @Column('text')
-    nome: string;
+    nome!: string;
 
     @Column('text')
-    email: string;
+    email!: string;
 
     @Column('text')
-    senha: string;
+    senha!: string;
 
     @CreateDateColumn({ type: 'timestamptz', name: 'criado_em' })
-    criado_em: Date;
+    criado_em!: Date;
 
     @OneToMany(() => Baralho, (baralho) => baralho.usuario)
-    baralhos: Baralho[];
+    baralhos!: Baralho[];
 }

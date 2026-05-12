@@ -22,6 +22,8 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
-    "ignoreDeprecations": "6.0"
-  }
+    "ignoreDeprecations": "6.0",
+    "types": ["jest", "node"]
+  },
+  "exclude": ["**/*.spec.ts", "node_modules", "dist"]
 }

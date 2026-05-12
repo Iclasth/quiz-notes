@@ -5,42 +5,42 @@ import { HistoricoRevisao } from './HistoricoRevisao';
 @Entity('cards')
 export class Card {
     @PrimaryGeneratedColumn('uuid', { name: 'id_card' })
-    id_card: string;
+    id_card!: string;
 
     @Column('text')
-    frente: string;
+    frente!: string;
 
     @Column('text')
-    verso: string;
+    verso!: string;
 
     @Column('int4', { default: 0 })
-    desempenho: number;
+    desempenho!: number;
 
     @Column('int4', { default: 0 })
-    acertos: number;
+    acertos!: number;
 
     @Column('int4', { default: 0 })
-    erros: number;
+    erros!: number;
 
     @Column('int4', { default: 0 })
-    intervalo: number;
+    intervalo!: number;
 
     @Column('timestamptz', { nullable: true })
-    proxima_revisao: Date;
+    proxima_revisao!: Date;
 
     @Column('text', { nullable: true })
-    imagem_url: string;
+    imagem_url!: string;
 
     @Column('uuid')
-    id_baralho: string;
+    id_baralho!: string;
 
     @CreateDateColumn({ type: 'timestamptz', name: 'criado_em' })
-    criado_em: Date;
+    criado_em!: Date;
 
     @ManyToOne(() => Baralho, (baralho) => baralho.cards, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'id_baralho' })
-    baralho: Baralho;
+    baralho!: Baralho;
 
     @OneToMany(() => HistoricoRevisao, (historico) => historico.card)
-    historico_revisoes: HistoricoRevisao[];
+    historico_revisoes!: HistoricoRevisao[];
 }
