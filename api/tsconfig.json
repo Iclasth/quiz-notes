@@ -20,6 +20,8 @@
     "noUncheckedSideEffectImports": true,
     "skipLibCheck": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "ignoreDeprecations": "6.0"
   }
 }
