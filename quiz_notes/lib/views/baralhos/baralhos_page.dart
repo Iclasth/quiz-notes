@@ -75,7 +75,7 @@ class BaralhosPage extends StatelessWidget {
                   padding: const EdgeInsets.all(14),
 
                   decoration: BoxDecoration(
-                    color: Colors.deepPurple.withOpacity(0.2),
+                    color: Colors.deepPurple.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(14),
                   ),
 
