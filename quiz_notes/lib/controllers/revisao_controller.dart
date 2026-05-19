@@ -7,7 +7,6 @@ class RevisaoController {
       resposta:
           'Flutter é um framework para criar aplicativos multiplataforma.',
       baralhoId: 'flutter_basico',
-      imagemUrl: 'https://picsum.photos/500/300',
     ),
     CardEstudo(
       pergunta: 'O que é Dart?',
@@ -18,7 +17,6 @@ class RevisaoController {
       pergunta: 'O que é MVC?',
       resposta: 'MVC separa o sistema em Model, View e Controller.',
       baralhoId: 'flutter_basico',
-      imagemUrl: 'https://picsum.photos/500/301',
     ),
   ];
 
