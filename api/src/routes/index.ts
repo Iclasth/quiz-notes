@@ -13,6 +13,7 @@ const reviewController = new ReviewController();
 
 // Usuários
 router.post('/users', userController.createUser);
+router.post('/login', userController.login);
 router.get('/users/:id', userController.getUserById);
 
 // Baralhos

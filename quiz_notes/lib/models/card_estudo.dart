@@ -1,4 +1,5 @@
 class CardEstudo {
+  String? id;
   String pergunta;
   String resposta;
   String baralhoId;
@@ -8,6 +9,7 @@ class CardEstudo {
   int intervalo;
 
   CardEstudo({
+    this.id,
     required this.pergunta,
     required this.resposta,
     required this.baralhoId,

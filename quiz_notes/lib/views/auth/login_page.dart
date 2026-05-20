@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'cadastro_page.dart';
 import '../home/home_page.dart';
+import '../../services/api_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,14 +13,31 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
+  final ApiService _apiService = ApiService();
 
-  void entrar() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const HomePage(title: 'Quiz Notes'),
-      ),
-    );
+  Future<void> entrar() async {
+    try {
+      final user = await _apiService.login(emailController.text, senhaController.text);
+      if (user != null) {
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomePage(title: 'Quiz Notes'),
+          ),
+        );
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Credenciais inválidas')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao conectar com a API')),
+      );
+    }
   }
 
   void abrirCadastro() {
