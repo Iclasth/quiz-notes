@@ -22,15 +22,16 @@ describe('DeckController', () => {
     });
 
     it('should create a deck and return 201', async () => {
-        const mockDeck = { id_baralho: '1', nome: 'Test Deck', id_usuario: '123' };
+        const mockDeck = { id_baralho: '1', nome: 'Test Deck', descricao: 'Test Description', id_usuario: '123' };
         (DeckService.prototype.createDeck as jest.Mock).mockResolvedValue(mockDeck);
 
         const response = await request(app)
             .post('/api/users/123/decks')
-            .send({ nome: 'Test Deck' });
+            .send({ nome: 'Test Deck', descricao: 'Test Description' });
 
         expect(response.status).toBe(201);
         expect(response.body).toEqual(mockDeck);
+        expect(DeckService.prototype.createDeck).toHaveBeenCalledWith('123', 'Test Deck', 'Test Description');
     });
 
     it('should return 400 if deck name is missing', async () => {

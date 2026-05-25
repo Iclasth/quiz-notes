@@ -1,46 +1,66 @@
 import 'package:flutter/material.dart';
+import '../../models/baralho.dart';
 import '../../models/card_estudo.dart';
+import '../../services/api_service.dart';
 import '../revisao/revisao_page.dart';
 import 'criar_card_page.dart';
 
 class CardsPage extends StatefulWidget {
-  const CardsPage({super.key});
+  final Baralho baralho;
+  const CardsPage({super.key, required this.baralho});
 
   @override
   State<CardsPage> createState() => _CardsPageState();
 }
 
 class _CardsPageState extends State<CardsPage> {
-  final List<CardEstudo> cards = [
-    CardEstudo(
-      pergunta: 'O que é Flutter?',
-      resposta: 'Framework para criar aplicativos multiplataforma.',
-      baralhoId: '1',
-    ),
-    CardEstudo(
-      pergunta: 'O que é Dart?',
-      resposta: 'Linguagem de programação usada pelo Flutter.',
-      baralhoId: '1',
-    ),
-    CardEstudo(
-      pergunta: 'O que é MVC?',
-      resposta: 'Arquitetura que separa Model, View e Controller.',
-      baralhoId: '1',
-    ),
-  ];
+  final ApiService _apiService = ApiService();
+  List<CardEstudo> cards = [];
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarCards();
+  }
+
+  Future<void> _carregarCards() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final response = await _apiService.dio.get('/decks/${widget.baralho.id}/cards');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data;
+        if (mounted) {
+          setState(() {
+            cards = data.map((item) => CardEstudo.fromJson(item)).toList();
+          });
+        }
+      }
+    } catch (e) {
+      // Ignora erro
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
 
   void abrirCriarCard() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const CriarCardPage()),
-    );
+      MaterialPageRoute(builder: (context) => CriarCardPage(deckId: widget.baralho.id)),
+    ).then((_) => _carregarCards());
   }
 
   void revisarBaralho() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const RevisaoPage()),
-    );
+      MaterialPageRoute(builder: (context) => RevisaoPage(deckId: widget.baralho.id)),
+    ).then((_) => _carregarCards());
   }
 
   void editarCard(CardEstudo card) {
@@ -162,74 +182,83 @@ class _CardsPageState extends State<CardsPage> {
             const SizedBox(height: 16),
 
             Expanded(
-              child: ListView.builder(
-                itemCount: cards.length,
-                itemBuilder: (context, index) {
-                  final card = cards[index];
-
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1E1E1E),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.all(20),
-
-                      leading: Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: Colors.deepPurple.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: const Icon(
-                          Icons.style,
-                          color: Colors.deepPurple,
-                          size: 30,
-                        ),
-                      ),
-
-                      title: Text(
-                        card.pergunta,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Text(
-                          card.resposta,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                      ),
-
-                      trailing: PopupMenuButton<String>(
-                        onSelected: (value) {
-                          if (value == 'editar') {
-                            editarCard(card);
-                          }
-
-                          if (value == 'excluir') {
-                            confirmarExclusao(index);
-                          }
-                        },
-                        itemBuilder: (context) => const [
-                          PopupMenuItem(value: 'editar', child: Text('Editar')),
-                          PopupMenuItem(
-                            value: 'excluir',
-                            child: Text('Excluir'),
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : cards.isEmpty
+                      ? const Center(
+                          child: Text(
+                            'Nenhum card cadastrado neste baralho.',
+                            style: TextStyle(color: Colors.grey, fontSize: 16),
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
+                        )
+                      : ListView.builder(
+                          itemCount: cards.length,
+                          itemBuilder: (context, index) {
+                            final card = cards[index];
+
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1E1E1E),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.all(20),
+
+                                leading: Container(
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.deepPurple.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: const Icon(
+                                    Icons.style,
+                                    color: Colors.deepPurple,
+                                    size: 30,
+                                  ),
+                                ),
+
+                                title: Text(
+                                  card.pergunta,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                                subtitle: Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: Text(
+                                    card.resposta,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
+                                ),
+
+                                trailing: PopupMenuButton<String>(
+                                  onSelected: (value) {
+                                    if (value == 'editar') {
+                                      editarCard(card);
+                                    }
+
+                                    if (value == 'excluir') {
+                                      confirmarExclusao(index);
+                                    }
+                                  },
+                                  itemBuilder: (context) => const [
+                                    PopupMenuItem(value: 'editar', child: Text('Editar')),
+                                    PopupMenuItem(
+                                      value: 'excluir',
+                                      child: Text('Excluir'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
             ),
           ],
         ),

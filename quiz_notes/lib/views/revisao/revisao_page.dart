@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../../controllers/revisao_controller.dart';
 
 class RevisaoPage extends StatefulWidget {
-  const RevisaoPage({super.key});
+  final String deckId;
+  const RevisaoPage({super.key, required this.deckId});
 
   @override
   State<RevisaoPage> createState() => _RevisaoPageState();
@@ -12,6 +13,25 @@ class _RevisaoPageState extends State<RevisaoPage> {
   final RevisaoController controller = RevisaoController();
 
   bool mostrarResposta = false;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarRevisao();
+  }
+
+  Future<void> _carregarRevisao() async {
+    setState(() {
+      isLoading = true;
+    });
+    await controller.carregarRevisao(widget.deckId);
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   void mostrarRespostaCard() {
     setState(() {
@@ -39,9 +59,42 @@ class _RevisaoPageState extends State<RevisaoPage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Revisão'), centerTitle: true),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : controller.cards.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.check_circle_outline,
+                        size: 72,
+                        color: Colors.green,
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Tudo limpo por hoje!',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Nenhum card pendente de revisão.',
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Voltar'),
+                      ),
+                    ],
+                  ),
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
           children: [
             Row(
               children: [

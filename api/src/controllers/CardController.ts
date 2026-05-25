@@ -18,4 +18,14 @@ export class CardController {
             next(error);
         }
     };
+
+    public getDeckCards = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const deckId = req.params['deckId'] as string;
+            const cards = await this.cardService.getDeckCards(deckId);
+            res.status(200).json(cards);
+        } catch (error) {
+            next(error);
+        }
+    };
 }

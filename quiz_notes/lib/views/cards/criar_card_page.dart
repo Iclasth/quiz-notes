@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../services/api_service.dart';
 
 class CriarCardPage extends StatefulWidget {
-  const CriarCardPage({super.key});
+  final String deckId;
+  const CriarCardPage({super.key, required this.deckId});
 
   @override
   State<CriarCardPage> createState() => _CriarCardPageState();
@@ -12,8 +14,8 @@ class CriarCardPage extends StatefulWidget {
 
 class _CriarCardPageState extends State<CriarCardPage> {
   final TextEditingController perguntaController = TextEditingController();
-
   final TextEditingController respostaController = TextEditingController();
+  final ApiService _apiService = ApiService();
 
   File? imagemSelecionada;
 
@@ -39,7 +41,7 @@ class _CriarCardPageState extends State<CriarCardPage> {
     }
   }
 
-  void salvarCard() {
+  void salvarCard() async {
     if (perguntaController.text.isEmpty || respostaController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
@@ -47,11 +49,33 @@ class _CriarCardPageState extends State<CriarCardPage> {
       return;
     }
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Card criado com sucesso')));
+    try {
+      final response = await _apiService.dio.post(
+        '/decks/${widget.deckId}/cards',
+        data: {
+          'frente': perguntaController.text,
+          'verso': respostaController.text,
+        },
+      );
 
-    Navigator.pop(context);
+      if (response.statusCode == 201) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Card criado com sucesso')));
+        Navigator.pop(context);
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Erro ao criar card')));
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Erro ao conectar com a API')));
+    }
   }
 
   @override

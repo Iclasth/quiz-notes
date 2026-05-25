@@ -35,4 +35,8 @@ export class CardService {
 
         return await this.cardRepository.save(newCard);
     }
+
+    async getDeckCards(deckId: string): Promise<Card[]> {
+        return await this.cardRepository.find({ where: { id_baralho: deckId } });
+    }
 }

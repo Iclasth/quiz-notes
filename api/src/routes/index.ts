@@ -22,6 +22,7 @@ router.get('/users/:userId/decks', deckController.getUserDecks);
 
 // Cards
 router.post('/decks/:deckId/cards', cardController.createCard);
+router.get('/decks/:deckId/cards', cardController.getDeckCards);
 
 // Revisões
 router.get('/decks/:deckId/revisao', reviewController.getCardsForReview);

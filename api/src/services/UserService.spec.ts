@@ -9,6 +9,11 @@ jest.mock('../config/data-source', () => ({
     }
 }));
 
+jest.mock('bcryptjs', () => ({
+    hash: jest.fn().mockResolvedValue('hashed_password123'),
+    compare: jest.fn()
+}));
+
 describe('UserService', () => {
     let userService: UserService;
     let userRepositoryMock: jest.Mocked<Repository<Usuario>>;
@@ -28,14 +33,14 @@ describe('UserService', () => {
 
     it('should create a new user successfully', async () => {
         const userData = { nome: 'Test User', email: 'test@example.com', senha: 'password123' };
-        const savedUser = { id_usuario: '123-uuid', ...userData, criado_em: new Date() } as Usuario;
+        const savedUser = { id_usuario: '123-uuid', ...userData, senha: 'hashed_password123', criado_em: new Date() } as Usuario;
 
         userRepositoryMock.create.mockReturnValue(savedUser);
         userRepositoryMock.save.mockResolvedValue(savedUser);
 
         const result = await userService.createUser(userData);
 
-        expect(userRepositoryMock.create).toHaveBeenCalledWith(userData);
+        expect(userRepositoryMock.create).toHaveBeenCalledWith({ ...userData, senha: 'hashed_password123' });
         expect(userRepositoryMock.save).toHaveBeenCalledWith(savedUser);
         expect(result).toEqual(savedUser);
     });

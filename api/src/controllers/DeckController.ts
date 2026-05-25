@@ -11,8 +11,8 @@ export class DeckController {
     public createDeck = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userId = req.params['userId'] as string;
-            const { nome } = req.body;
-            const deck = await this.deckService.createDeck(userId, nome);
+            const { nome, descricao } = req.body;
+            const deck = await this.deckService.createDeck(userId, nome, descricao);
             res.status(201).json(deck);
         } catch (error) {
             next(error);

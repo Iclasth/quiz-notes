@@ -10,6 +10,9 @@ export class Baralho {
     @Column('text')
     nome!: string;
 
+    @Column('text', { nullable: true })
+    descricao?: string;
+
     @Column('uuid')
     id_usuario!: string;
 

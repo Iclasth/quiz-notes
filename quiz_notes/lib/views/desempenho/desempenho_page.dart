@@ -59,6 +59,7 @@ class _DesempenhoPageState extends State<DesempenhoPage> {
         _estatisticas = DashboardStats.fromJson(jsonSimulado);
       });
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Erro ao conectar com o banco: $e")),
       );
