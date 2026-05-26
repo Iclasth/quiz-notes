@@ -14,6 +14,7 @@ app.use(express.json());
 const userController = new UserController();
 app.post('/api/users', userController.createUser);
 app.get('/api/users/:id', userController.getUserById);
+app.get('/api/users/:userId/stats', userController.getUserStats);
 app.use(errorHandler);
 
 describe('UserController', () => {
@@ -58,6 +59,35 @@ describe('UserController', () => {
         (UserService.prototype.getUserById as jest.Mock).mockRejectedValue(new NotFoundError('Usuário não encontrado'));
 
         const response = await request(app).get('/api/users/999');
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe('Usuário não encontrado');
+    });
+
+    it('should get user stats and return 200', async () => {
+        const mockStats = {
+            total_baralhos: 1,
+            total_cards: 5,
+            total_revisoes: 10,
+            total_acertos: 8,
+            total_erros: 2,
+            taxa_acerto: 80.0,
+            sequencia_dias: 3,
+            dados_grafico: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
+        };
+        (UserService.prototype.getUserStats as jest.Mock).mockResolvedValue(mockStats);
+
+        const response = await request(app).get('/api/users/123/stats');
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(mockStats);
+        expect(UserService.prototype.getUserStats).toHaveBeenCalledWith('123');
+    });
+
+    it('should return 404 if user not found when getting stats', async () => {
+        (UserService.prototype.getUserStats as jest.Mock).mockRejectedValue(new NotFoundError('Usuário não encontrado'));
+
+        const response = await request(app).get('/api/users/999/stats');
 
         expect(response.status).toBe(404);
         expect(response.body.message).toBe('Usuário não encontrado');

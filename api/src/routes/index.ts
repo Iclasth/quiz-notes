@@ -15,6 +15,7 @@ const reviewController = new ReviewController();
 router.post('/users', userController.createUser);
 router.post('/login', userController.login);
 router.get('/users/:id', userController.getUserById);
+router.get('/users/:userId/stats', userController.getUserStats);
 
 // Baralhos
 router.post('/users/:userId/decks', deckController.createDeck);

@@ -1,33 +1,6 @@
 import 'package:flutter/material.dart';
-
-class DashboardStats {
-  final int totalRevisoes;
-  final int totalAcertos;
-  final int totalErros;
-  final double taxaAcerto;
-  final int sequenciaDias;
-  final List<double> dadosGrafico;
-
-  const DashboardStats({
-    required this.totalRevisoes,
-    required this.totalAcertos,
-    required this.totalErros,
-    required this.taxaAcerto,
-    required this.sequenciaDias,
-    required this.dadosGrafico,
-  });
-
-  factory DashboardStats.fromJson(Map<String, dynamic> json) {
-    return DashboardStats(
-      totalRevisoes: json['total_revisoes'] ?? 0,
-      totalAcertos: json['total_acertos'] ?? 0,
-      totalErros: json['total_erros'] ?? 0,
-      taxaAcerto: (json['taxa_acerto'] ?? 0.0).toDouble(),
-      sequenciaDias: json['sequencia_dias'] ?? 0,
-      dadosGrafico: List<double>.from(json['dados_grafico'] ?? []),
-    );
-  }
-}
+import '../../models/dashboard_stats.dart';
+import '../../services/api_service.dart';
 
 class DesempenhoPage extends StatefulWidget {
   const DesempenhoPage({super.key});
@@ -44,20 +17,20 @@ class _DesempenhoPageState extends State<DesempenhoPage> {
     setState(() => _isLoading = true);
 
     try {
-      await Future.delayed(const Duration(milliseconds: 650));
-
-      final jsonSimulado = {
-        'total_revisoes': 145,
-        'total_acertos': 112,
-        'total_erros': 33,
-        'taxa_acerto': 77.2,
-        'sequencia_dias': 7,
-        'dados_grafico': [0.9, 0.7, 0.5, 0.1, 0.3, 0.0, 0.2, 0.4],
-      };
-
-      setState(() {
-        _estatisticas = DashboardStats.fromJson(jsonSimulado);
-      });
+      final apiService = ApiService();
+      final userId = await apiService.getUserId();
+      if (userId != null) {
+        final response = await apiService.dio.get('/users/$userId/stats');
+        if (response.statusCode == 200 && response.data != null) {
+          setState(() {
+            _estatisticas = DashboardStats.fromJson(response.data);
+          });
+        } else {
+          throw Exception("Falha ao carregar dados do servidor");
+        }
+      } else {
+        throw Exception("Usuário não identificado");
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
