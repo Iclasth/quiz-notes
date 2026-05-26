@@ -68,4 +68,19 @@ describe('CardService', () => {
     it('should throw BadRequestError if front or back is missing', async () => {
         await expect(cardService.createCard('deck-123', '', 'A')).rejects.toThrow('Frente e verso são obrigatórios');
     });
+
+    it('should return all cards of a deck successfully', async () => {
+        const deckId = 'deck-123';
+        const mockCards = [
+            { id_card: '1', frente: 'Q1', verso: 'A1', id_baralho: deckId },
+            { id_card: '2', frente: 'Q2', verso: 'A2', id_baralho: deckId }
+        ] as Card[];
+
+        cardRepositoryMock.find.mockResolvedValue(mockCards);
+
+        const result = await cardService.getDeckCards(deckId);
+
+        expect(cardRepositoryMock.find).toHaveBeenCalledWith({ where: { id_baralho: deckId } });
+        expect(result).toEqual(mockCards);
+    });
 });

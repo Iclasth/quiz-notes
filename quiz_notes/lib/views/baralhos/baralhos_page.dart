@@ -1,44 +1,50 @@
 import 'package:flutter/material.dart';
 
+import '../../controllers/baralho_controller.dart';
 import '../../models/baralho.dart';
 import '../cards/cards_page.dart';
 import 'criar_baralho_page.dart';
 
-class BaralhosPage extends StatelessWidget {
-  BaralhosPage({super.key});
+class BaralhosPage extends StatefulWidget {
+  const BaralhosPage({super.key});
 
-  final List<Baralho> baralhos = [
-    Baralho(
-      id: 'flutter_basico',
-      nome: 'Flutter Básico',
-      descricao: 'Cards sobre Flutter, Dart e MVC.',
-    ),
+  @override
+  State<BaralhosPage> createState() => _BaralhosPageState();
+}
 
-    Baralho(
-      id: 'node_backend',
-      nome: 'Node.js Backend',
-      descricao: 'API REST, Express e TypeORM.',
-    ),
+class _BaralhosPageState extends State<BaralhosPage> {
+  final BaralhoController controller = BaralhoController();
 
-    Baralho(
-      id: 'supabase',
-      nome: 'Supabase',
-      descricao: 'Banco de dados e Storage.',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _carregarDados();
+  }
 
-  void abrirCards(BuildContext context) {
+  Future<void> _carregarDados() async {
+    setState(() {
+      controller.isLoading = true;
+    });
+    await controller.carregarBaralhos();
+    if (mounted) {
+      setState(() {
+        controller.isLoading = false;
+      });
+    }
+  }
+
+  void abrirCards(BuildContext context, Baralho baralho) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CardsPage()),
-    );
+      MaterialPageRoute(builder: (context) => CardsPage(baralho: baralho)),
+    ).then((_) => _carregarDados());
   }
 
   void criarBaralho(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const CriarBaralhoPage()),
-    );
+      MaterialPageRoute(builder: (context) => CriarBaralhoPage(controller: controller)),
+    ).then((_) => _carregarDados());
   }
 
   @override
@@ -54,66 +60,77 @@ class BaralhosPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16),
 
-        child: ListView.builder(
-          itemCount: baralhos.length,
+        child: controller.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : controller.baralhos.isEmpty
+                ? const Center(
+                    child: Text(
+                      'Nenhum baralho criado ainda.',
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: controller.baralhos.length,
 
-          itemBuilder: (context, index) {
-            final baralho = baralhos[index];
+                    itemBuilder: (context, index) {
+                      final baralho = controller.baralhos[index];
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: 16),
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 16),
 
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E1E1E),
-                borderRadius: BorderRadius.circular(20),
-              ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1E1E1E),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
 
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(20),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(20),
 
-                leading: Container(
-                  padding: const EdgeInsets.all(14),
+                          leading: Container(
+                            padding: const EdgeInsets.all(14),
 
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(14),
+                            decoration: BoxDecoration(
+                              color: Colors.deepPurple.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+
+                            child: const Icon(
+                              Icons.layers,
+                              color: Colors.deepPurple,
+                              size: 32,
+                            ),
+                          ),
+
+                          title: Text(
+                            baralho.nome,
+
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          subtitle: baralho.descricao.isNotEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+
+                                  child: Text(
+                                    baralho.descricao,
+
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
+                                )
+                              : null,
+
+                          trailing: const Icon(Icons.arrow_forward_ios),
+
+                          onTap: () {
+                            abrirCards(context, baralho);
+                          },
+                        ),
+                      );
+                    },
                   ),
-
-                  child: const Icon(
-                    Icons.layers,
-                    color: Colors.deepPurple,
-                    size: 32,
-                  ),
-                ),
-
-                title: Text(
-                  baralho.nome,
-
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 10),
-
-                  child: Text(
-                    baralho.descricao,
-
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                ),
-
-                trailing: const Icon(Icons.arrow_forward_ios),
-
-                onTap: () {
-                  abrirCards(context);
-                },
-              ),
-            );
-          },
-        ),
       ),
     );
   }

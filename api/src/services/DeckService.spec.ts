@@ -37,15 +37,15 @@ describe('DeckService', () => {
 
     it('should create a deck successfully', async () => {
         const userId = '123-uuid';
-        const deckData = { nome: 'My Deck' };
+        const deckData = { nome: 'My Deck', descricao: 'My Description' };
         
         userRepositoryMock.findOneBy.mockResolvedValue({ id_usuario: userId } as Usuario);
         deckRepositoryMock.create.mockReturnValue({ ...deckData, id_usuario: userId } as Baralho);
         deckRepositoryMock.save.mockResolvedValue({ id_baralho: 'deck-123', ...deckData, id_usuario: userId } as Baralho);
 
-        const result = await deckService.createDeck(userId, deckData.nome);
+        const result = await deckService.createDeck(userId, deckData.nome, deckData.descricao);
 
-        expect(deckRepositoryMock.create).toHaveBeenCalledWith({ nome: deckData.nome, id_usuario: userId });
+        expect(deckRepositoryMock.create).toHaveBeenCalledWith({ nome: deckData.nome, descricao: deckData.descricao, id_usuario: userId });
         expect(deckRepositoryMock.save).toHaveBeenCalled();
         expect(result.id_baralho).toBe('deck-123');
     });

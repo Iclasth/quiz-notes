@@ -13,7 +13,7 @@ export class DeckService {
         return AppDataSource.getRepository(Usuario);
     }
 
-    async createDeck(userId: string, nome: string): Promise<Baralho> {
+    async createDeck(userId: string, nome: string, descricao?: string): Promise<Baralho> {
         if (!nome) {
             throw new BadRequestError('O nome do baralho é obrigatório');
         }
@@ -23,7 +23,7 @@ export class DeckService {
             throw new NotFoundError('Usuário não encontrado');
         }
 
-        const newDeck = this.deckRepository.create({ nome, id_usuario: userId });
+        const newDeck = this.deckRepository.create({ nome, descricao, id_usuario: userId });
         return await this.deckRepository.save(newDeck);
     }
 

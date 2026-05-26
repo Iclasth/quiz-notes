@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../controllers/baralho_controller.dart';
 
 class CriarBaralhoPage extends StatefulWidget {
-  const CriarBaralhoPage({super.key});
+  final BaralhoController controller;
+  const CriarBaralhoPage({super.key, required this.controller});
 
   @override
   State<CriarBaralhoPage> createState() => _CriarBaralhoPageState();
@@ -11,7 +13,7 @@ class _CriarBaralhoPageState extends State<CriarBaralhoPage> {
   final TextEditingController nomeController = TextEditingController();
   final TextEditingController descricaoController = TextEditingController();
 
-  void salvarBaralho() {
+  void salvarBaralho() async {
     if (nomeController.text.isEmpty ||
         descricaoController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -22,13 +24,27 @@ class _CriarBaralhoPageState extends State<CriarBaralhoPage> {
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Baralho criado com sucesso'),
-      ),
+    final success = await widget.controller.criarBaralho(
+      nomeController.text,
+      descricaoController.text,
     );
 
-    Navigator.pop(context);
+    if (success) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Baralho criado com sucesso'),
+        ),
+      );
+      Navigator.pop(context);
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao criar baralho'),
+        ),
+      );
+    }
   }
 
   @override

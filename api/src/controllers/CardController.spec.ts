@@ -13,6 +13,7 @@ app.use(express.json());
 
 const cardController = new CardController();
 app.post('/api/decks/:deckId/cards', cardController.createCard);
+app.get('/api/decks/:deckId/cards', cardController.getDeckCards);
 app.use(errorHandler);
 
 describe('CardController', () => {
@@ -52,5 +53,16 @@ describe('CardController', () => {
 
         expect(response.status).toBe(404);
         expect(response.body.message).toBe('Baralho não encontrado');
+    });
+
+    it('should get all cards of a deck and return 200', async () => {
+        const mockCards = [{ id_card: '1', frente: 'Q', verso: 'A', id_baralho: '123' }];
+        (CardService.prototype.getDeckCards as jest.Mock).mockResolvedValue(mockCards);
+
+        const response = await request(app).get('/api/decks/123/cards');
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(mockCards);
+        expect(CardService.prototype.getDeckCards).toHaveBeenCalledWith('123');
     });
 });

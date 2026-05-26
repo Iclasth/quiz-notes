@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/api_service.dart';
 
 class CadastroPage extends StatefulWidget {
   const CadastroPage({super.key});
@@ -11,13 +12,29 @@ class _CadastroPageState extends State<CadastroPage> {
   final TextEditingController nomeController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
+  final ApiService _apiService = ApiService();
 
-  void cadastrar() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Conta criada com sucesso!')));
-
-    Navigator.pop(context);
+  Future<void> cadastrar() async {
+    try {
+      final user = await _apiService.cadastrar(nomeController.text, emailController.text, senhaController.text);
+      if (user != null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Conta criada com sucesso!')),
+        );
+        Navigator.pop(context);
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao criar conta')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao conectar com a API')),
+      );
+    }
   }
 
   @override
