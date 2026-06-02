@@ -86,17 +86,17 @@ export class UserService {
 
                 const uniqueDates = new Set<string>();
                 reviews.forEach(r => {
-                    const dateStr = new Date(r.data_revisao).toISOString().split('T')[0];
+                    const dateStr = new Date(r.data_revisao).toISOString().split('T')[0]!;
                     uniqueDates.add(dateStr);
                 });
 
-                const todayStr = new Date().toISOString().split('T')[0];
-                const yesterdayStr = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                const todayStr = new Date().toISOString().split('T')[0]!;
+                const yesterdayStr = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0]!;
 
                 if (uniqueDates.has(todayStr) || uniqueDates.has(yesterdayStr)) {
                     let checkDate = uniqueDates.has(todayStr) ? new Date() : new Date(Date.now() - 24 * 60 * 60 * 1000);
                     while (true) {
-                        const checkStr = checkDate.toISOString().split('T')[0];
+                        const checkStr = checkDate.toISOString().split('T')[0]!;
                         if (uniqueDates.has(checkStr)) {
                             sequenciaDias++;
                             checkDate.setDate(checkDate.getDate() - 1);
@@ -110,19 +110,19 @@ export class UserService {
 
                 for (let i = 0; i < 4; i++) {
                     const diffDays = i - 3;
-                    const targetDateStr = new Date(Date.now() + diffDays * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                    const targetDateStr = new Date(Date.now() + diffDays * 24 * 60 * 60 * 1000).toISOString().split('T')[0]!;
                     absoluteCounts[i] = reviews.filter(r => {
-                        const rDateStr = new Date(r.data_revisao).toISOString().split('T')[0];
+                        const rDateStr = new Date(r.data_revisao).toISOString().split('T')[0]!;
                         return rDateStr === targetDateStr;
                     }).length;
                 }
 
                 for (let i = 4; i < 8; i++) {
                     const diffDays = i - 3;
-                    const targetDateStr = new Date(Date.now() + diffDays * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                    const targetDateStr = new Date(Date.now() + diffDays * 24 * 60 * 60 * 1000).toISOString().split('T')[0]!;
                     absoluteCounts[i] = cards.filter(c => {
                         if (!c.proxima_revisao) return false;
-                        const cDateStr = new Date(c.proxima_revisao).toISOString().split('T')[0];
+                        const cDateStr = new Date(c.proxima_revisao).toISOString().split('T')[0]!;
                         return cDateStr === targetDateStr;
                     }).length;
                 }
