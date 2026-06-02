@@ -23,7 +23,11 @@ export class DeckService {
             throw new NotFoundError('Usuário não encontrado');
         }
 
-        const newDeck = this.deckRepository.create({ nome, descricao, id_usuario: userId });
+        const newDeck = this.deckRepository.create({
+            nome,
+            id_usuario: userId,
+            ...(descricao !== undefined ? { descricao } : {})
+        });
         return await this.deckRepository.save(newDeck);
     }
 
